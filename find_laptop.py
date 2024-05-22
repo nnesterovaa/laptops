@@ -1,18 +1,17 @@
-import clearml
-from clearml import Task
 import pandas as pd
 import telebot
 import spacy
-
+import clearml
+from clearml import Task
 
 # Установить ключ API вашего проекта
 task1 = Task.init(project_name='Подбор ноутбука', task_name='Laptops')
 
 nlp = spacy.load("ru_core_news_md")
+# nlp = spacy.load("en_core_web_md")
+
 bot = telebot.TeleBot('7010978135:AAEh_urIyQSOPnbN2E3Rizqx5v8Nzp8KqTE')
 
-# Инициализировать задачу ClearML
-task_clearml = Task.init(project_name='Подбор ноутбука', task_name='Laptops')
 
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
@@ -26,7 +25,7 @@ def get_text_messages(message):
             i = 1
             for notebook in recommended_notebooks:
                 bot.send_message(message.from_user.id,
-                                 notebook['Manufacturer'] + notebook['Model Name'] + ' ' + notebook[
+                                 notebook['Manufacturer'] + ' ' + notebook['Model Name'] + ' ' + notebook[
                                      'Category'] + ' #Screen Size= ' + str(
                                      notebook['Screen Size']) + ' #Weight= ' + str(notebook['Weight']))
                 i += 1
@@ -78,9 +77,9 @@ def find_matching_notebooks1(user_query, data):
                 conditions.append(1 <= notebook['Weight'] <= 2)
             if 'небольшой' in user_query:
                 conditions.append(notebook['Screen Size'] <= 15.4 and notebook['Weight'] <= 3)
-            if 'классический' in user_query:
+            if 'дешевый' in user_query:
                 conditions.append(float(notebook['Price (Euros)'].replace(',', '.')) <= 1000)
-            if 'ноутбук' in user_query:
+            if 'классический' in user_query:
                 conditions.append(notebook['Category'] == 'notebook')
             if 'ультрабук' in user_query:
                 conditions.append(notebook['Category'] == 'ultrabook')
